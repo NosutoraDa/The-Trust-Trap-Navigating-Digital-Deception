@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardian - Cek, Belajar, Bertindak</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="template.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-shield-halved"></i></div>
+    <div>
+      <h1>Guardian</h1>
+      <p>Cek, belajar, dan bertindak melawan penipuan digital</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Robot -->
+  <div class="robot-wrap">
+    <div id="speech" class="speech glow-blue">
+      <p id="speech-text">Halo! Saya Guardian. Tempel pesan, tautan, atau nama file yang membingungkan, lalu mari kita periksa bersama.</p>
+    </div>
+    <div id="avatar"></div>
+    <div class="status"><span id="status-text">Mode siaga</span></div>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="check"><i class="fas fa-magnifying-glass"></i> Cek</button>
+    <button class="tab-btn" data-tab="learn"><i class="fas fa-graduation-cap"></i> Belajar</button>
+    <button class="tab-btn" data-tab="act"><i class="fas fa-shield-halved"></i> Bertindak</button>
+    <button class="tab-btn" data-tab="ask"><i class="fas fa-comments"></i> Tanya AI</button>
+  </nav>
+
+  <!-- CEK -->
+  <section id="tab-check" class="tab-section">
+    <div class="card">
+      <h3>Tempel pesan, tautan, atau nama file</h3>
+      <textarea id="user-input" rows="4" placeholder="Contoh: Selamat, Anda menang undian 50 juta. Segera transfer biaya admin ke QRIS ini."></textarea>
+      <div class="chips">
+        <span class="muted">Coba contoh:</span>
+        <button class="chip" data-example="0">Link phishing</button>
+        <button class="chip" data-example="1">Undangan APK</button>
+        <button class="chip" data-example="2">Lowongan kerja</button>
+      </div>
+      <div class="row">
+        <button id="check-btn" class="btn-primary"><i class="fas fa-magnifying-glass"></i> Periksa</button>
+        <button id="clear-btn" class="btn-ghost" title="Bersihkan"><i class="fas fa-rotate-left"></i></button>
+      </div>
+      <p class="note">Pemeriksaan ini memakai aturan pola sederhana. Hasil "tidak terdeteksi" belum tentu aman. Selalu verifikasi lewat kanal resmi.</p>
+    </div>
+
+    <div id="result" class="card" hidden>
+      <div class="result-head">
+        <div id="res-icon" class="result-icon"></div>
+        <div>
+          <span id="res-level" class="badge"></span>
+          <h2 id="res-title"></h2>
+        </div>
+      </div>
+      <h3>Tanda yang terdeteksi</h3>
+      <ul id="res-reasons" class="list"></ul>
+      <h3>Yang harus dilakukan sekarang</h3>
+      <ul id="res-actions" class="list ok"></ul>
+    </div>
+  </section>
+
+  <!-- BELAJAR -->
+  <section id="tab-learn" class="tab-section" hidden>
+    <div class="card">
+      <h2>Latihan skenario</h2>
+      <p class="muted">Pilih respons yang menurutmu paling aman, lalu lihat penjelasannya.</p>
+    </div>
+    <div id="scenario-list"></div>
+  </section>
+
+  <!-- BERTINDAK -->
+  <section id="tab-act" class="tab-section" hidden>
+    <div class="card">
+      <h2>Jika kamu sudah terlanjur</h2>
+      <ol class="steps">
+        <li>Jangan buka file APK atau isi data di tautan tersebut lagi.</li>
+        <li>Jika sudah transfer atau memberi OTP/PIN, hubungi call center resmi bank Anda untuk pemblokiran secepatnya.</li>
+        <li>Ganti kata sandi akun penting dan aktifkan autentikasi dua langkah (2FA).</li>
+        <li>Cek nomor rekening penerima di <strong>cekrekening.id</strong> bila tersedia.</li>
+        <li>Laporkan ke <strong>patrolisiber.id</strong> atau kepolisian setempat dengan tangkapan layar sebagai bukti.</li>
+        <li>Untuk investasi atau layanan keuangan ilegal, laporkan ke OJK melalui <strong>157</strong>.</li>
+      </ol>
+      <p class="note">Verifikasi nomor dan situs di atas sendiri sebelum menghubunginya.</p>
+    </div>
+
+    <div class="card">
+      <h2>Peringatan untuk keluarga</h2>
+      <p class="muted">Jalankan pemeriksaan di tab Cek, lalu salin drafnya.</p>
+      <div id="draft" class="draft">Belum ada draf. Periksa pesan terlebih dahulu.</div>
+      <button id="copy-btn" class="btn-soft"><i class="fas fa-copy"></i> Salin draf</button>
+      <span id="copy-status" class="copy-status"></span>
+    </div>
+  </section>
+
+  <!-- TANYA AI -->
+  <section id="tab-ask" class="tab-section" hidden>
+    <div class="card">
+      <h2>Tanya seputar keamanan siber</h2>
+      <p class="warn-note">Mode demo: jawaban dari daftar tetap. Untuk jawaban dinamis, sambungkan ke Claude API lewat backend.</p>
+      <div id="chat-log" class="chat-log">
+        <div class="msg bot">Halo! Tanyakan misalnya "apa itu OTP?" atau "kenapa APK berbahaya?"</div>
+      </div>
+      <form id="chat-form" class="row">
+        <input id="chat-input" type="text" placeholder="Tulis pertanyaanmu...">
+        <button class="btn-primary" type="submit">Kirim</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Guardian memberi panduan edukatif dan tidak menjamin keamanan 100%. Data yang kamu masukkan diproses di perangkatmu dan tidak disimpan.
+</footer>
+
+<!-- Three.js for the 3D robot -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ================= 3D ROBOT ================= */
+let camera, renderer, robot, eyeL, eyeR, ring, halo, robotState = 'idle';
+let mouseX = 0, mouseY = 0;
+const clock = new THREE.Clock();
+const COLORS = { idle: 0x3b82f6, scanning: 0xf59e0b, danger: 0xef4444, safe: 0x10b981 };
+
+function initRobot() {
+  const box = document.getElementById('avatar');
+  const w = box.clientWidth, h = box.clientHeight;
+
+  const scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
+  camera.position.set(0, 0.2, 5.2);
+
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  box.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+  const key = new THREE.DirectionalLight(0x3b82f6, 1.4); key.position.set(3, 4, 5); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x6366f1, 1.0); rim.position.set(-3, 2, -2); scene.add(rim);
+
+  robot = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.8 });
+  const chromeMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.2, metalness: 0.9 });
+  const visorMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1, metalness: 0.9 });
+
+  // Head
+  const headGeo = new THREE.SphereGeometry(1.0, 32, 32);
+  headGeo.scale(1.0, 1.05, 0.95);
+  robot.add(new THREE.Mesh(headGeo, bodyMat));
+
+  // Visor
+  const visorGeo = new THREE.SphereGeometry(0.85, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.45);
+  const visor = new THREE.Mesh(visorGeo, visorMat);
+  visor.rotation.x = Math.PI / 2.2;
+  visor.position.set(0, 0.05, 0.22);
+  robot.add(visor);
+
+  // Eyes
+  const eyeGeo = new THREE.SphereGeometry(0.12, 32, 32);
+  eyeGeo.scale(1, 1, 0.4);
+  const eyeMat = new THREE.MeshBasicMaterial({ color: COLORS.idle });
+  eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.35, 0.08, 0.92);
+  eyeR = new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(0.35, 0.08, 0.92);
+  robot.add(eyeL, eyeR);
+
+  // Ear knobs
+  const earGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.3, 32);
+  earGeo.rotateZ(Math.PI / 2);
+  const earL = new THREE.Mesh(earGeo, chromeMat); earL.position.set(-1.05, 0.05, 0);
+  const earR = new THREE.Mesh(earGeo, chromeMat); earR.position.set(1.05, 0.05, 0);
+  robot.add(earL, earR);
+
+  // Rings
+  const ringMat = new THREE.MeshBasicMaterial({ color: COLORS.idle, transparent: true, opacity: 0.6 });
+  ring = new THREE.Mesh(new THREE.TorusGeometry(1.25, 0.03, 16, 64), ringMat);
+  ring.rotation.x = Math.PI / 2.5; ring.position.y = -0.5;
+  robot.add(ring);
+  halo = new THREE.Mesh(new THREE.TorusGeometry(0.45, 0.02, 16, 32), ringMat);
+  halo.rotation.x = Math.PI / 2; halo.position.y = 1.35;
+  robot.add(halo);
+
+  scene.add(robot);
+
+  window.addEventListener('mousemove', e => {
+    mouseX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+    mouseY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+  });
+  window.addEventListener('resize', () => {
+    const nw = box.clientWidth, nh = box.clientHeight;
+    camera.aspect = nw / nh; camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+  });
+
+  let blinkTimer = 0;
+  (function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    robot.rotation.y += (mouseX * 0.4 - robot.rotation.y) * 0.06;
+    robot.rotation.x += (mouseY * 0.25 - robot.rotation.x) * 0.06;
+    robot.position.y = Math.sin(t * 2.2) * 0.08;
+    ring.rotation.z = t * 0.5;
+    halo.rotation.z = -t * 0.8;
+
+    // Blink
+    blinkTimer += 0.016;
+    const blink = blinkTimer > 3.5 && blinkTimer < 3.65 && robotState !== 'scanning';
+    eyeL.scale.y = eyeR.scale.y = blink ? 0.05 : 1;
+    if (blinkTimer >= 3.65) blinkTimer = 0;
+
+    if (robotState === 'scanning') { robot.rotation.y = Math.sin(t * 8) * 0.2; ring.rotation.z = t * 3; }
+    if (robotState === 'danger') robot.position.x = Math.sin(t * 25) * 0.025;
+    if (robotState === 'safe') robot.rotation.z = Math.sin(t * 4) * 0.05;
+
+    renderer.render(scene, camera);
+  })();
+}
+
+/* ================= ROBOT STATE ================= */
+const SPEECH_GLOW = { idle: 'glow-blue', scanning: 'glow-amber', danger: 'glow-red', safe: 'glow-green' };
+const STATUS_TEXT = { idle: 'Mode siaga', scanning: 'Sedang menganalisis...', danger: 'Awas, bahaya terdeteksi!', safe: 'Tampak aman' };
+
+function setRobot(state, message) {
+  robotState = state;
+  const speech = document.getElementById('speech');
+  speech.className = 'speech ' + SPEECH_GLOW[state];
+  document.getElementById('speech-text').textContent = message;
+  document.getElementById('status-text').textContent = STATUS_TEXT[state];
+  if (eyeL) {
+    eyeL.material.color.setHex(COLORS[state]);
+    eyeR.material.color.setHex(COLORS[state]);
+    ring.material.color.setHex(COLORS[state]);
+  }
+}
+
+/* ================= TABS ================= */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-section').forEach(s => s.hidden = true);
+    document.getElementById('tab-' + btn.dataset.tab).hidden = false;
+  });
+});
+
+/* ================= CEK ================= */
+const EXAMPLES = [
+  "https://hadiah-bank-mandiri.blogspot.com/login-verifikasi?token=99283 Akun Anda akan diblokir hari ini, segera verifikasi dan masukkan kata sandi serta OTP.",
+  "Halo Kak, ini undangan pernikahan digital kami. Silakan instal SuratUndangan.apk ini ya.",
+  "Lowongan kerja paruh waktu, komisi besar. Untuk daftar, transfer biaya admin 150rb ke QRIS atas nama Budi Santoso."
+];
+
+const RULES = [
+  { w: 4, label: 'Meminta instal file .APK di luar Play Store (modus pembobolan OTP).', test: t => /\.apk\b/.test(t) },
+  { w: 2, label: 'Tautan memakai layanan gratisan atau domain yang sering dipakai penipu.', test: t => /(blogspot|weebly|wixsite|\.tk\b|\.ml\b|\.ga\b|\.cf\b|bit\.ly|tinyurl)/.test(t) },
+  { w: 2, label: 'Nama bank atau layanan resmi dipakai di tautan yang bukan domain resminya.', test: t => /(mandiri|bca|bri|bni|dana|gopay|shopee|ovo|jne)/.test(t) && /https?:\/\//.test(t) },
+  { w: 3, label: 'Meminta kata sandi, PIN, atau OTP. Lembaga resmi tidak pernah memintanya lewat chat.', test: t => /(otp|pin\b|kata sandi|password|kode verifikasi)/.test(t) },
+  { w: 2, label: 'Tekanan waktu agar kamu bertindak tanpa berpikir.', test: t => /(segera|hari ini|dalam \d+ (jam|menit)|terakhir|akan diblokir|ditangguhkan|batas waktu)/.test(t) },
+  { w: 3, label: 'Meminta transfer, biaya admin, atau deposit di awal.', test: t => /(transfer|biaya admin|deposit|bayar|top ?up|pulsa)/.test(t) },
+  { w: 2, label: 'Pembayaran QRIS atau rekening yang mengarah ke nama perorangan.', test: t => /(qris|rekening)/.test(t) && /(atas nama|a\.n\.|pribadi|perorangan)/.test(t) },
+  { w: 2, label: 'Iming-iming hadiah, undian, atau giveaway yang tidak pernah kamu ikuti.', test: t => /(menang|giveaway|undian|hadiah|gratis)/.test(t) },
+  { w: 2, label: 'Tawaran kerja dengan komisi besar, sering disertai syarat bayar di awal.', test: t => /(lowongan|paruh waktu|komisi|kerja dari rumah)/.test(t) },
+  { w: 1, label: 'Mengaku dari instansi atau kurir. Verifikasi identitasnya lewat kanal resmi.', test: t => /(kurir|paket|pajak|polisi|kejaksaan|pihak bank)/.test(t) }
+];
+
+let draftText = 'Tetap waspada dan verifikasi setiap pesan sebelum bertindak.';
+
+function runCheck() {
+  const raw = document.getElementById('user-input').value.trim();
+  if (!raw) { setRobot('idle', 'Tempel dulu pesan, tautan, atau nama file yang ingin diperiksa ya.'); return; }
+  const t = raw.toLowerCase();
+
+  setRobot('scanning', 'Mohon tunggu, saya sedang memeriksa tanda-tanda bahayanya...');
+  document.getElementById('result').hidden = true;
+
+  setTimeout(() => {
+    const hits = RULES.filter(r => r.test(t));
+    const score = hits.reduce((s, r) => s + r.w, 0);
+
+    let tone, level, title, robotMsg, actions;
+    if (score >= 5) {
+      tone = 'red'; level = 'Tingkat bahaya tinggi'; title = 'Kemungkinan besar penipuan';
+      robotMsg = 'Gawat! Ini tampak seperti penipuan. Jangan diklik, jangan diunduh, dan jangan ditransfer.';
+      actions = ['Jangan klik tautan, buka file, atau transfer uang.', 'Jika sudah memberi data, ikuti langkah di tab Bertindak.', 'Bagikan peringatan ke keluarga.'];
+      draftText = `PERINGATAN: ${title}. Jangan klik tautan, buka file APK, atau transfer uang dari pesan seperti ini. Bagikan ke yang lain agar tidak tertipu.`;
+    } else if (score >= 2) {
+      tone = 'amber'; level = 'Perlu waspada'; title = 'Ada beberapa tanda mencurigakan';
+      robotMsg = 'Ada beberapa tanda yang perlu diperhatikan. Verifikasi dulu sebelum bertindak.';
+      actions = ['Verifikasi pengirim lewat nomor atau kanal resmi yang kamu cari sendiri.', 'Jangan memberi OTP, PIN, atau kata sandi kepada siapa pun.'];
+      draftText = `HATI-HATI: ${title}. Verifikasi dulu sebelum mengikuti instruksi dari pesan ini.`;
+    } else {
+      tone = 'green'; level = 'Risiko rendah'; title = 'Tidak ada pola penipuan yang jelas';
+      robotMsg = 'Tampak aman. Saya tidak menemukan pola penipuan yang jelas, tetapi tetap waspada ya.';
+      actions = ['Tetap waspada dan jangan berbagi kode OTP.'];
+    }
+
+    const icon = document.getElementById('res-icon');
+    const toneIcon = { red: 'fa-triangle-exclamation', amber: 'fa-circle-exclamation', green: 'fa-shield-halved' }[tone];
+    icon.className = 'result-icon tone-' + tone;
+    icon.innerHTML = `<i class="fas ${toneIcon}"></i>`;
+    const lvl = document.getElementById('res-level');
+    lvl.className = 'badge tone-' + tone;
+    lvl.textContent = level;
+    document.getElementById('res-title').textContent = title;
+
+    const reasons = document.getElementById('res-reasons');
+    reasons.innerHTML = hits.length
+      ? hits.map(h => `<li><i class="fas fa-angle-right"></i><span>${h.label}</span></li>`).join('')
+      : '<li><i class="fas fa-circle-info"></i><span>Tidak ada pola yang cocok. Tetap verifikasi pengirim sebelum bertindak.</span></li>';
+
+    document.getElementById('res-actions').innerHTML = actions.map(a => `<li><i class="fas fa-check"></i><span>${a}</span></li>`).join('');
+    document.getElementById('result').hidden = false;
+    document.getElementById('draft').textContent = draftText;
+
+    setRobot(tone === 'red' ? 'danger' : tone === 'green' ? 'safe' : 'idle', robotMsg);
+  }, 1000);
+}
+
+document.getElementById('check-btn').addEventListener('click', runCheck);
+document.getElementById('clear-btn').addEventListener('click', () => {
+  document.getElementById('user-input').value = '';
+  document.getElementById('result').hidden = true;
+  setRobot('idle', 'Halo! Saya Guardian. Tempel pesan, tautan, atau nama file yang membingungkan, lalu mari kita periksa bersama.');
+});
+document.querySelectorAll('[data-example]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.getElementById('user-input').value = EXAMPLES[chip.dataset.example];
+  });
+});
+
+/* ================= ACT ================= */
+document.getElementById('copy-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(draftText).then(() => {
+    const s = document.getElementById('copy-status');
+    s.textContent = 'Tersalin!';
+    setTimeout(() => s.textContent = '', 2000);
+  });
+});
+
+/* ================= LEARN ================= */
+const SCENARIOS = [
+  {
+    title: 'Chat "rekruter" di WhatsApp',
+    msg: '"Selamat! Anda lolos seleksi admin online. Like 20 video, dapat Rp150.000 per hari. Untuk aktivasi, isi saldo Rp200.000 dulu ya."',
+    choices: [
+      { t: 'Transfer karena nominalnya kecil dan sudah lolos seleksi', ok: false, why: 'Pekerjaan sah tidak meminta setoran di awal. Ini pola umum penipuan kerja paruh waktu.' },
+      { t: 'Cek perusahaan lewat kontak resmi di situsnya', ok: true, why: 'Tepat. Verifikasi lewat kanal yang kamu cari sendiri, bukan dari pesan tersebut.' },
+      { t: 'Tanya dulu lebih jauh, lalu tetap transfer jika meyakinkan', ok: false, why: 'Penipu akan terus meyakinkan. Jangan ambil keputusan transfer saat ada tekanan.' }
+    ]
+  },
+  {
+    title: 'SMS "paket tertahan"',
+    msg: 'Paket Anda tertahan karena alamat tidak lengkap. Konfirmasi di: jne-resi-update.xyz/konfirmasi',
+    choices: [
+      { t: 'Klik tautan dan isi alamat agar paket bisa dikirim', ok: false, why: 'Domain itu bukan situs resmi JNE. Tautan semacam ini dipakai untuk mencuri data.' },
+      { t: 'Cek resi langsung di aplikasi atau situs resmi kurir', ok: true, why: 'Tepat. Cek sendiri lewat jalur resmi, bukan lewat tautan di SMS.' },
+      { t: 'Balas dan tanya siapa pengirimnya', ok: false, why: 'Membalas memberi tahu penipu bahwa nomormu aktif dan bisa memicu pesan berikutnya.' }
+    ]
+  },
+  {
+    title: 'Telepon "petugas bank"',
+    msg: 'Penelepon mengaku dari bank: "Kartu Anda akan diblokir. Sebutkan kode OTP yang baru kami kirim agar bisa diverifikasi."',
+    choices: [
+      { t: 'Sebutkan OTP agar kartu tidak diblokir', ok: false, why: 'Bank tidak pernah meminta OTP. Jangan pernah memberikannya kepada siapa pun.' },
+      { t: 'Tutup telepon, lalu hubungi nomor di belakang kartu', ok: true, why: 'Tepat. Hubungi nomor resmi untuk memastikan status kartumu.' },
+      { t: 'Minta nama pegawainya lalu lanjutkan percakapan', ok: false, why: 'Nama dan nomor pegawai bisa dipalsukan. Tetap gunakan kanal resmi.' }
+    ]
+  }
+];
+
+const scenarioList = document.getElementById('scenario-list');
+SCENARIOS.forEach((s, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<h2>${i + 1}. ${s.title}</h2><div class="scenario-msg">${s.msg}</div>`;
+  s.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.textContent = c.t;
+    const fb = document.createElement('div');
+    fb.className = 'feedback';
+    fb.hidden = true;
+    btn.addEventListener('click', () => {
+      fb.className = 'feedback ' + (c.ok ? 'good' : 'bad');
+      fb.textContent = (c.ok ? 'Benar. ' : 'Kurang tepat. ') + c.why;
+      fb.hidden = false;
+    });
+    card.appendChild(btn);
+    card.appendChild(fb);
+  });
+  scenarioList.appendChild(card);
+});
+
+/* ================= TANYA AI (demo) ================= */
+const QA = [
+  { k: ['otp'], a: 'OTP adalah kode sekali pakai untuk verifikasi. Jangan pernah membagikannya, termasuk kepada orang yang mengaku dari bank.' },
+  { k: ['apk'], a: 'File APK dipasang dari luar toko aplikasi resmi, sehingga bisa membaca SMS dan membobol OTP. Pasang aplikasi hanya dari Play Store atau App Store.' },
+  { k: ['2fa', 'dua langkah'], a: 'Autentikasi dua langkah menambahkan lapisan kedua, misalnya kode dari aplikasi autentikator, sehingga kata sandi saja tidak cukup untuk masuk.' },
+  { k: ['phishing'], a: 'Phishing adalah tautan atau pesan palsu yang meniru layanan resmi untuk mencuri data. Periksa domainnya dan jangan memasukkan data lewat tautan dari pesan tak dikenal.' },
+  { k: ['qris'], a: 'QRIS resmi ditujukan ke merchant terdaftar. Jika diminta scan QRIS untuk "biaya admin" atau "aktivasi", itu tanda penipuan.' }
+];
+
+function addMsg(text, who) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  const log = document.getElementById('chat-log');
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+document.getElementById('chat-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const q = input.value.trim();
+  if (!q) return;
+  addMsg(q, 'user');
+  const lower = q.toLowerCase();
+  const hit = QA.find(x => x.k.some(k => lower.includes(k)));
+  addMsg(hit ? hit.a : 'Untuk demo ini, saya baru bisa menjawab topik OTP, APK, 2FA, phishing, dan QRIS. Pertanyaan lain akan dijawab setelah AI tersambung.', 'bot');
+  input.value = '';
+});
+
+/* ================= START ================= */
+window.addEventListener('load', initRobot);
+</script>
+</body>
+</html>

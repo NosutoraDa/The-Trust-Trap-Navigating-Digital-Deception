@@ -2,15 +2,19 @@
 
 use App\Http\Controllers\AskController;
 use App\Http\Controllers\CheckController;
+use App\Http\Controllers\FileScanController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/cek');
+Route::redirect('/', '/links');
 
-Route::get('/cek', [PageController::class, 'cek'])->name('cek');
-Route::get('/belajar', [PageController::class, 'belajar'])->name('belajar');
-Route::get('/bertindak', [PageController::class, 'bertindak'])->name('bertindak');
+Route::redirect('/cek', '/links', 301);
 Route::get('/tanya', [PageController::class, 'tanya'])->name('tanya');
+Route::get('/links', [PageController::class, 'links'])->name('links');
+Route::get('/files', [PageController::class, 'files'])->name('files');
 
-Route::post('/api/cek', [CheckController::class, 'store'])->name('api.cek');
+Route::post('/api/links', [CheckController::class, 'store'])->name('api.links');
+Route::post('/api/links/analysis', [CheckController::class, 'analysis'])->name('api.links.analysis');
+Route::post('/api/files', [FileScanController::class, 'store'])->name('api.files');
+Route::post('/api/files/analysis', [FileScanController::class, 'analysis'])->name('api.files.analysis');
 Route::post('/api/tanya', [AskController::class, 'store'])->name('api.tanya');

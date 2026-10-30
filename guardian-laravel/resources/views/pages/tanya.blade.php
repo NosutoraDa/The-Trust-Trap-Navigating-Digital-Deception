@@ -1,22 +1,28 @@
 @extends('layouts.app')
 
-@section('title', 'Tanya AI')
+@section('title', 'Chatbot')
 @section('active', 'tanya')
 @section('robot-mode', 'chat')
 @section('robot-message', 'Tanyakan apa saja seputar penipuan digital dan keamanan siber.')
 
 @section('content')
     <div class="card">
-        <h2>Tanya seputar keamanan siber</h2>
-        <p class="warn-note">Mode demo: jawaban dari config/guardian.php. Untuk jawaban dinamis, sambungkan AskController ke Claude API.</p>
+        <div class="tool-heading">
+            <span class="tool-icon"><i class="fas fa-comment-dots" aria-hidden="true"></i></span>
+            <div>
+                <h2>Chatbot keamanan digital</h2>
+                <p>Tanyakan cara mengenali dan menghadapi penipuan digital.</p>
+            </div>
+        </div>
+        <p class="warn-note">Jawaban dibuat oleh model open-source melalui Hugging Face. Jangan kirim data pribadi, OTP, PIN, atau kata sandi.</p>
 
         <div id="chat-log" class="chat-log">
-            <div class="msg bot">Halo! Tanyakan misalnya "apa itu OTP?" atau "kenapa APK berbahaya?"</div>
+            <div class="msg bot">Halo! Tanyakan apa saja seputar penipuan digital, misalnya "apa itu phishing?"</div>
         </div>
 
         <form id="chat-form" class="row">
-            <input id="chat-input" type="text" placeholder="Tulis pertanyaanmu..." autocomplete="off">
-            <button class="btn-primary" type="submit">Kirim</button>
+            <input id="chat-input" type="text" placeholder="Tulis pertanyaanmu..." autocomplete="off" maxlength="500" required>
+            <button id="chat-submit" class="btn-primary" type="submit">Kirim</button>
         </form>
     </div>
 @endsection
@@ -26,6 +32,7 @@
 (() => {
     const log = document.getElementById('chat-log');
     const input = document.getElementById('chat-input');
+    const submit = document.getElementById('chat-submit');
     const csrf = document.querySelector('meta[name="csrf-token"]').content;
 
     function addMsg(text, who) {
@@ -43,6 +50,7 @@
 
         addMsg(question, 'user');
         input.value = '';
+        submit.disabled = true;
         Robot.pulse(); // robot "types" while the answer loads
 
         try {
@@ -56,11 +64,16 @@
                 body: JSON.stringify({ question }),
             });
 
-            if (!response.ok) throw new Error('HTTP ' + response.status);
             const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Chatbot tidak dapat menjawab saat ini.');
+            }
             addMsg(data.answer, 'bot');
         } catch (error) {
-            addMsg('Maaf, jawaban belum bisa diambil. Coba lagi sebentar lagi.', 'bot');
+            addMsg(error.message || 'Maaf, jawaban belum bisa diambil. Coba lagi sebentar lagi.', 'bot');
+        } finally {
+            submit.disabled = false;
+            input.focus();
         }
     });
 })();

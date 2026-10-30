@@ -2,33 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PageController extends Controller
 {
-    public function cek(): View
+    public function links(): View
     {
-        return view('pages.cek', [
+        return view('pages.links', [
             'examples' => config('guardian.examples'),
         ]);
     }
 
-    public function belajar(): View
+    public function files(): View
     {
-        return view('pages.belajar', [
-            'scenarios' => config('guardian.scenarios'),
-        ]);
-    }
-
-    public function bertindak(Request $request): View
-    {
-        return view('pages.bertindak', [
-            'draft' => $request->session()->get(
-                'guardian_draft',
-                'Belum ada draf. Periksa pesan di tab Cek terlebih dahulu.'
-            ),
-        ]);
+        return view('pages.files');
     }
 
     public function tanya(): View
